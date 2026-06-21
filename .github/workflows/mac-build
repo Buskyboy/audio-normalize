@@ -1,1 +1,41 @@
+name: Build macOS Application
 
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch: # Allows you to manually trigger the build
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+        cache: 'pip'
+
+    - name: Install ffmpeg
+      run: |
+        brew install ffmpeg
+
+    - name: Install Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Build Application with PyInstaller
+      run: |
+        pyinstaller -y --onedir --windowed --icon=controls.icns --osx-bundle-identifier=com.setlistnormalizer mmain.py
+
+
+
+    - name: Upload macOS Application Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: set-list-normalizer.dmg
+        path: dist/Set_List_Normalizer.dmg
