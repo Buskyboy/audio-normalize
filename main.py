@@ -15,7 +15,8 @@ def main(page: ft.Page):
     page.window.maximizable = False
     page.update()
 
-    page.theme_mode = ft.ThemeMode.DARK
+    page.theme_mode = ft.ThemeMode.DARK 
+    
     
 
     # --- State Variables ---
