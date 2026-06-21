@@ -30,7 +30,7 @@ jobs:
 
     - name: Build Application with PyInstaller
       run: |
-        pyinstaller -y --onedir --windowed --icon=controls.icns --osx-bundle-identifier=com.setlistnormalizer mmain.py
+        pyinstaller -y --onedir --windowed --icon=controls.icns --osx-bundle-identifier=com.setlistnormalizer main.py
 
 
 
