@@ -1,1 +1,54 @@
+name: Build macOS Application
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch: # Allows you to manually trigger the build
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+        cache: 'pip'
+
+    - name: Install ffmpeg
+      run: |
+        brew install ffmpeg
+        brew install ffmpeg-normalize
+
+    - name: Install Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Build Application with PyInstaller
+      run: |
+        pyinstaller -y --onedir --windowed --icon=controls.icns --osx-bundle-identifier=com.youtube-downloader myDownloader.py
+
+
+    - name: Create DMG (Disk Image)
+      run: |
+        brew install create-dmg
+        create-dmg \
+          --volname "Setlist audio Nomalizer" \
+          --window-pos 200 120 \
+          --window-size 600 400 \
+          --icon-size 100 \
+          --icon "controls.app" 200 190 \
+          "dist/Setlist-Audio-Normalizer.dmg" \
+          "dist/setlisaudiobormalizer.app"
+
+    - name: Upload macOS Application Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: Setlist-Audio-Normalizer.dmg
+        path: dist/Setlist-Audio-Normalizer.dmg
 
