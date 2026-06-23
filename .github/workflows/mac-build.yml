@@ -31,9 +31,20 @@ jobs:
         # This creates the .app bundle inside the dist/ folder
         pyinstaller -y --onedir --windowed --icon=controls.icns --osx-bundle-identifier=com.setlist-audio-normalizer main.py
 
-    - name: Upload Artifact
+    - name: Create DMG (Disk Image)
+      run: |
+        brew install create-dmg
+        create-dmg \
+          --volname "SETLISTNORMALIZER" \
+          --window-pos 200 120 \
+          --window-size 600 400 \
+          --icon-size 100 \
+          --icon "controls.app" 200 190 \
+          "dist/setlistnormalizer.dmg" \
+          "dist/setlistnormalizer.app"
+
+    - name: Upload macOS Application Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: macOS-App-Bundle
-        # Pointing to 'dist/' ensures we capture the folder structure PyInstaller created
-        path: dist/main/
+        name: setlistnormalizer.dmg
+        path: dist/setlistnormalizer.dmg
