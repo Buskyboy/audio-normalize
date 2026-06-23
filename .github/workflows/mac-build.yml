@@ -39,7 +39,7 @@ jobs:
           --window-pos 200 120 \
           --window-size 600 400 \
           --icon-size 100 \
-          --icon "controls.app" 200 190 \
+          --icon "controls.icns" 200 190 \
           "dist/setlistnormalizer.dmg" \
           "dist/setlistnormalizer.app"
 
