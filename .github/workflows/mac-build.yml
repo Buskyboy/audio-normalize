@@ -39,6 +39,6 @@ jobs:
     - name: Upload macOS Application Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: Setlist-Audio-Normalizer.dmg
+        name: Setlist-Audio-Normalizer
         path: dist/Setlist-Audio-Normalizer.dmg
 
