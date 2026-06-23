@@ -1,0 +1,5 @@
+
+PyInstaller
+wxPython
+ffmpeg-python
+ffmpeg-normalize
