@@ -31,7 +31,7 @@ jobs:
 
     - name: Build Application with PyInstaller
       run: |
-        pyinstaller -y --onedir --windowed --icon=controls.icns --osx-bundle-identifier=com.youtube-downloader myDownloader.py
+        pyinstaller -y --onedir --windowed --icon=controls.icns --osx-bundle-identifier=com.setlist-audio-normalizer main.py
 
 
     - name: Create DMG (Disk Image)
