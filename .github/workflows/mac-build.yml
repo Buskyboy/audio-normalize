@@ -22,7 +22,7 @@ jobs:
     - name: Install ffmpeg
       run: |
         brew install ffmpeg
-        brew install ffmpeg-normalize
+        
 
     - name: Install Dependencies
       run: |
