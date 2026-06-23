@@ -34,17 +34,7 @@ jobs:
         pyinstaller -y --onedir --windowed --icon=controls.icns --osx-bundle-identifier=com.setlist-audio-normalizer main.py
 
 
-    - name: Create DMG (Disk Image)
-      run: |
-        brew install create-dmg
-        create-dmg \
-          --volname "Setlist audio Nomalizer" \
-          --window-pos 200 120 \
-          --window-size 600 400 \
-          --icon-size 100 \
-          --icon "controls.app" 200 190 \
-          "dist/Setlist-Audio-Normalizer.dmg" \
-          "dist/setlisaudiobormalizer.app"
+   
 
     - name: Upload macOS Application Artifact
       uses: actions/upload-artifact@v4
