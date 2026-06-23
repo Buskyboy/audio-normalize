@@ -33,12 +33,14 @@ jobs:
       run: |
         pyinstaller -y --onedir --windowed --icon=controls.icns --osx-bundle-identifier=com.setlist-audio-normalizer main.py
 
+ # 1. Your electron-builder / packaging step goes here
+    - name: Build macOS App
+      run: npm run build # Or your specific build command
 
-   
-
-    - name: Upload macOS Application Artifact
+      # 2. Upload step must follow the build step
+    - name: Upload DMG Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: Setlist-Audio-Normalizer
-        path: dist/Setlist-Audio-Normalizer.dmg
+          name: macOS-Build
+          path: dist/Setlist-Audio-Normalizer.dmg
 
