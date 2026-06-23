@@ -38,6 +38,9 @@ jobs:
       #run: npm run build # Or your specific build command
 
       # 2. Upload step must follow the build step
+    - name: List files for debugging
+      run: ls -R dist/
+      
     - name: Upload DMG Artifact
       uses: actions/upload-artifact@v4
       with:
