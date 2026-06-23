@@ -34,8 +34,8 @@ jobs:
         pyinstaller -y --onedir --windowed --icon=controls.icns --osx-bundle-identifier=com.setlist-audio-normalizer main.py
 
  # 1. Your electron-builder / packaging step goes here
-    - name: Build macOS App
-      run: npm run build # Or your specific build command
+   # - name: Build macOS App
+      #run: npm run build # Or your specific build command
 
       # 2. Upload step must follow the build step
     - name: Upload DMG Artifact
