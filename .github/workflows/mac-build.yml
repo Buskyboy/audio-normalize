@@ -33,9 +33,11 @@ jobs:
 
     - name: Build app with PyInstaller
       run: |
-        # --windowed creates a .app bundle and hides the terminal console
-        # --noconfirm overwrites any existing build folders without asking
-        pyinstaller --noconfirm --windowed --name "Audio Normalize" --icon "controls.icns" main.py
+        pyinstaller --noconfirm --windowed --name "Audio Normalize" \
+          --icon "controls.icns" \
+          --add-binary "$(which ffmpeg):." \
+          --add-binary "$(which ffprobe):." \
+          main.py
 
     - name: Zip the .app bundle
       run: |
