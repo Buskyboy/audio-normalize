@@ -1,1 +1,55 @@
+name: Build macOS App
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch: # Allows you to manually trigger the build from the GitHub UI
+
+jobs:
+  build:
+    runs-on: macos-latest # This currently provisions an Apple Silicon (M-series) runner
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11' # 3.11 has great compatibility with wxPython
+
+    - name: Install system dependencies
+      run: |
+        brew update
+        brew install ffmpeg
+
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        # Install your required packages plus PyInstaller for bundling
+        pip install wxpython ffmpeg-normalize pyinstaller
+
+    - name: Build app with PyInstaller
+      run: |
+        pyinstaller --noconfirm --windowed --name "Audio Normalize" \
+          --icon "controls.icns" \
+          --add-binary "$(which ffmpeg):." \
+          --add-binary "$(which ffprobe):." \
+          main.py
+
+    - name: Zip the .app bundle
+      run: |
+        cd dist
+        # macOS .app files are actually folders. GitHub Actions can corrupt them 
+        # if uploaded directly, so we must zip it first.
+        zip -r "Audio-Normalize-macOS.zip" "Audio Normalize.app"
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: Audio-Normalize-macOS
+        path: dist/Audio-Normalize-macOS.zip
+        retention-days: 7
 
