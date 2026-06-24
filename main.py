@@ -1,7 +1,14 @@
 import os
+import sys
 import threading
 import wx
 from ffmpeg_normalize import FFmpegNormalize
+
+# When bundled by PyInstaller, prepend the bundle folder to PATH so that
+# ffmpeg_normalize can locate the ffmpeg binary that was packaged with the app.
+if getattr(sys, 'frozen', False):
+    bundle_dir = sys._MEIPASS
+    os.environ['PATH'] = bundle_dir + os.pathsep + os.environ.get('PATH', '')
 
 class NormalizerFrame(wx.Frame): 
     def __init__(self):
@@ -135,7 +142,7 @@ class NormalizerFrame(wx.Frame):
         self.Layout()
         self.SendSizeEvent()
         self.SetSize(451, 426)
-        self.SetSize(450, 425)
+        self.SetSize(450, 425) 
            
     def OnPickFolder(self, event):
         with wx.DirDialog(self, "Select Folder", style=wx.DD_DEFAULT_STYLE | wx.DD_DIR_MUST_EXIST) as dirDialog:
@@ -255,9 +262,13 @@ class NormalizerFrame(wx.Frame):
                 wx.CallAfter(self.UpdateUIOnFinalStatus, "Success! Normalized files saved.", wx.Colour(102, 187, 106))
                
         except Exception as ex:
-            # Safely call MessageBox from background thread
-            wx.CallAfter(wx.MessageBox, "The file extension for output must match the file being processed.", "MisMatch", wx.OK)
-            wx.CallAfter(self.UpdateUIOnFailure, f"Processing Error: {str(ex)}", wx.Colour(255, 238, 88))
+            error_msg = str(ex)
+            if "extension" in error_msg.lower() or "codec" in error_msg.lower():
+                display_msg = "The file extension for output must match the codec selected."
+            else:
+                display_msg = error_msg
+            wx.CallAfter(wx.MessageBox, display_msg, "Processing Error", wx.OK | wx.ICON_ERROR)
+            wx.CallAfter(self.UpdateUIOnFailure, f"Processing Error: {error_msg}", wx.Colour(255, 238, 88))
 
     # --- Thread Safe UI Mutation Methods ---
     def UpdateUIOnFailure(self, message, color):
