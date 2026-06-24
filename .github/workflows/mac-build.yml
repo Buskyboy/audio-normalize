@@ -1,50 +1,52 @@
-name: Build macOS Application
+name: Build macOS App
 
 on:
   push:
     branches: [ "main" ]
-  workflow_dispatch:
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch: # Allows you to manually trigger the build from the GitHub UI
 
 jobs:
   build:
-    runs-on: macOS 26
+    runs-on: macos-latest # This currently provisions an Apple Silicon (M-series) runner
 
     steps:
-    - name: Checkout Repository
+    - name: Checkout repository
       uses: actions/checkout@v4
 
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
-        python-version: '3.11'
-        cache: 'pip'
+        python-version: '3.11' # 3.11 has great compatibility with wxPython
 
-    - name: Install dependencies
+    - name: Install system dependencies
       run: |
+        brew update
         brew install ffmpeg
+
+    - name: Install Python dependencies
+      run: |
         python -m pip install --upgrade pip
-        pip install -r requirements.txt
-        pip install pyinstaller
+        # Install your required packages plus PyInstaller for bundling
+        pip install wxpython ffmpeg-normalize pyinstaller
 
-    - name: Build Application with PyInstaller
+    - name: Build app with PyInstaller
       run: |
-        # This creates the .app bundle inside the dist/ folder
-        pyinstaller -y --onedir --windowed --icon=controls.icns --osx-bundle-identifier=com.setlist-audio-normalizer main.py
+        # --windowed creates a .app bundle and hides the terminal console
+        # --noconfirm overwrites any existing build folders without asking
+        pyinstaller --noconfirm --windowed --name "Audio Normalize" --icon "controls.icns" main.py
 
-    - name: Create DMG (Disk Image)
+    - name: Zip the .app bundle
       run: |
-        brew install create-dmg
-        create-dmg \
-          --volname "SETLISTNORMALIZER" \
-          --window-pos 200 120 \
-          --window-size 600 400 \
-          --icon-size 100 \
-          --icon "controls.icns" 200 190 \
-          "dist/setlistnormalizer.dmg" \
-          "dist/setlistnormalizer.app"
+        cd dist
+        # macOS .app files are actually folders. GitHub Actions can corrupt them 
+        # if uploaded directly, so we must zip it first.
+        zip -r "Audio-Normalize-macOS.zip" "Audio Normalize.app"
 
-    - name: Upload macOS Application Artifact
+    - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: setlistnormalizer.dmg
-        path: dist/setlistnormalizer.dmg
+        name: Audio-Normalize-macOS
+        path: dist/Audio-Normalize-macOS.zip
+        retention-days: 7
