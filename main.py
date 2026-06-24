@@ -135,7 +135,7 @@ class NormalizerFrame(wx.Frame):
         self.Layout()
         self.SendSizeEvent()
         self.SetSize(451, 426)
-        self.SetSize(450, 425)
+        self.SetSize(450, 425) 
            
     def OnPickFolder(self, event):
         with wx.DirDialog(self, "Select Folder", style=wx.DD_DEFAULT_STYLE | wx.DD_DIR_MUST_EXIST) as dirDialog:
